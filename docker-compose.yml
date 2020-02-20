@@ -1,0 +1,23 @@
+version: '3.3'
+
+services:
+  mysql:
+    image: mysql:5.6  
+    ports:
+      - 3306:3306
+    environment:
+      - MYSQL_ROOT_PASSWORD=root_pass
+      - MYSQL_USER=mysql_user
+      - MYSQL_PASSWORD=mysql_pass
+      - MYSQL_DATABASE=mysql_db
+
+  backend-service:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    working_dir: /usr/src/app
+    ports:
+      - 8080:8080
+    volumes:
+      - .:/usr/src/app
+    command: dockerize -wait tcp://$DB_URL:$DB_PORT -timeout 1m mvn spring-boot:run
